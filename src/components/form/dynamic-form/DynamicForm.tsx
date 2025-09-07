@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useFormValidation } from "../../../hooks/useFormValidation";
 import { fetchSchema } from "../../../services/api/schemaService";
 import { FieldRules, FormSection } from "../../../types/form/form.types";
-import { SuccessModal } from "../success-modal/SuccessModal";
+import { ErrorMessage } from "../../common/ErrorMessage";
+import { Loader } from "../../common/Loader/Loader";
 import { FormField } from "../form-field/FormField";
+import { FormHeader } from "../FormHeader";
+import { SuccessModal } from "../success-modal/SuccessModal";
 import { DynamicFormProps, DynamicFormState } from "./DynamicForm.type";
 import { dynamicFormConsts } from "./dynamicFormConsts";
-import { ProgressBar } from "../../common/ProgressBar/ProgressBar";
-import { Loader } from "../../common/Loader/Loader";
-import { FormHeader } from "../FormHeader";
-import { ErrorMessage } from "../../common/ErrorMessage";
 
 export const DynamicForm: React.FC<DynamicFormProps> = ({
   onSubmit,
