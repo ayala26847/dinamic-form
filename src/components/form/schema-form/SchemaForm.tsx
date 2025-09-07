@@ -1,7 +1,7 @@
 import { useFetch } from "../../../hooks/useFetch";
 import { fetchSchema } from "../../../services/api/schemaService";
 import ErrorMessage from "../../common/ErrorMessage/ErrorMessage";
-import { Loader } from "../../common/Loader/Loader";
+import Loader, {  } from "../../common/Loader/Loader";
 import { DynamicForm } from "../dynamic-form/DynamicForm";
 
 

@@ -4,7 +4,7 @@ import { loaderConsts } from './LoaderConsts';
 
 
 
-export const Loader: React.FC<LoaderProps> = ({
+const Loader: React.FC<LoaderProps> = ({
   size = 'md',
   message = loaderConsts.LoadingMessage,
   className = '',
@@ -27,3 +27,5 @@ export const Loader: React.FC<LoaderProps> = ({
       </div>
     );
 };
+
+export default Loader;

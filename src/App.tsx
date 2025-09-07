@@ -1,6 +1,5 @@
 import { appConsts } from "./appConsts";
 import { DynamicForm } from "./components/form/dynamic-form/DynamicForm";
-import SchemaForm from "./components/form/schema-form/SchemaForm";
 import "./index.css";
 
 function App() {
