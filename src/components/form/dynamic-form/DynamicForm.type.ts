@@ -9,8 +9,6 @@ export interface DynamicFormProps {
 }
 
 export interface DynamicFormState {
-  isLoading: boolean;
-  error: string | null;
   showSuccessModal: boolean;
   isSubmitting: boolean;
 }

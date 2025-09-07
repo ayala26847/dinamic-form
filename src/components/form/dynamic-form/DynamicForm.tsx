@@ -19,9 +19,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   enableAutoSave = false,
   className = "",
 }) => {
-  const [state, setState] = useState<DynamicFormState>({
-    isLoading: false,
-    error: null,
+  const [state, setState] = useState({
     showSuccessModal: false,
     isSubmitting: false,
   });
@@ -88,23 +86,25 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
     }
 
     try {
-      setState((prev: DynamicFormState) => ({ ...prev, isSubmitting: true }));
+      setState((prev) => ({ ...prev, isSubmitting: true }));
 
       if (onSubmit) {
         await onSubmit(formData as any);
       }
 
-      setState((prev: DynamicFormState) => ({
+      setState((prev) => ({
         ...prev,
         showSuccessModal: true,
         isSubmitting: false,
       }));
     } catch (error) {
-      setState((prev: DynamicFormState) => ({
+      setState((prev) => ({
         ...prev,
-        error: error instanceof Error ? error.message : "Failed to submit form",
         isSubmitting: false,
       }));
+      
+      // Let AsyncWrapper handle error display if needed
+      console.error('Form submission failed:', error);
     }
   };
 
@@ -119,7 +119,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
 
   // Handle modal close
   const handleCloseModal = () => {
-    setState((prev: DynamicFormState) => ({ ...prev, showSuccessModal: false }));
+    setState((prev) => ({ ...prev, showSuccessModal: false }));
   };
 
   // Calculate progress percentage
@@ -144,18 +144,17 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   };
 
   return (
-    <div className={getDynamicFormClasses.container(className)}>
-      <AsyncWrapper
-        data={schema}
-        isLoading={isLoading}
-        error={error}
-        onRetry={refetch}
-        loadingMessage="Loading form schema..."
-        errorTitle="Failed to Load Form"
-        className={className}
-      >
-        {(schema) => (
-          <div className={dynamicFormStyles.wrapper}>
+    <AsyncWrapper
+      data={schema}
+      isLoading={isLoading}
+      error={error}
+      onRetry={refetch}
+      loadingMessage="Loading form schema..."
+      errorTitle="Failed to Load Form"
+      className={getDynamicFormClasses.container(className)}
+    >
+      {(schema) => (
+        <div className={dynamicFormStyles.wrapper}>
             {/* Header */}
             <FormHeader
               title="Dynamic Form"
@@ -220,9 +219,8 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
               onClose={handleCloseModal}
               allowDataExport={true}
             />
-          </div>
-        )}
-      </AsyncWrapper>
-    </div>
+        </div>
+      )}
+    </AsyncWrapper>
   );
 };

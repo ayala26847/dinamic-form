@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 export interface AsyncDataState<T> {
   data: T | null;
@@ -22,38 +22,66 @@ export function useAsyncData<T>(
   const [data, setData] = useState<T | null>(null);
   const [isLoading, setIsLoading] = useState(executeOnMount);
   const [error, setError] = useState<string | null>(null);
+  
+  const isMountedRef = useRef(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const executeAsync = useCallback(async (retries = retryCount) => {
+    if (!isMountedRef.current) return;
+    
     try {
-      setIsLoading(true);
-      setError(null);
+      if (isMountedRef.current) {
+        setIsLoading(true);
+        setError(null);
+      }
       
       const result = await asyncFunction();
-      setData(result);
+      
+      if (isMountedRef.current) {
+        setData(result);
+      }
     } catch (err) {
+      if (!isMountedRef.current) return;
+      
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       
       if (retries > 0) {
-        setTimeout(() => {
-          executeAsync(retries - 1);
+        timeoutRef.current = setTimeout(() => {
+          if (isMountedRef.current) {
+            executeAsync(retries - 1);
+          }
         }, retryDelay);
         return;
       }
       
-      setError(errorMessage);
+      if (isMountedRef.current) {
+        setError(errorMessage);
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
     }
   }, [asyncFunction, retryCount, retryDelay]);
 
   const refetch = useCallback(async () => {
-    await executeAsync();
+    if (isMountedRef.current) {
+      await executeAsync();
+    }
   }, [executeAsync]);
 
   useEffect(() => {
     if (executeOnMount) {
       executeAsync();
     }
+
+    return () => {
+      isMountedRef.current = false;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
   }, [executeOnMount, executeAsync]);
 
   return {
