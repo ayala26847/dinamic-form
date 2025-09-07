@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormHeaderProps } from './FormHeader.types';
-import { ProgressBar } from '../../common/ProgressBar/ProgressBar';
+import ProgressBar from '../../common/ProgressBar/ProgressBar';
 
 const FormHeader: React.FC<FormHeaderProps> = ({
   title,

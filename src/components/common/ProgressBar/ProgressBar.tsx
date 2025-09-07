@@ -3,7 +3,7 @@ import { ProgressBarProps } from './ProgressBar.types';
 import { PROGRESS_BAR_COLOR_CLASSES, PROGRESS_BAR_SIZE_CLASSES } from './progressBarConsts';
 
 
-export const ProgressBar: React.FC<ProgressBarProps> = ({
+const ProgressBar: React.FC<ProgressBarProps> = ({
   percentage,
   showPercentage = true,
   className = '',
@@ -40,3 +40,4 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   );
 };
 
+export default ProgressBar;

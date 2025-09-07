@@ -1,10 +1,9 @@
+import { CheckCircle, Download, X } from 'lucide-react';
 import React from 'react';
-import { CheckCircle, X, Download } from 'lucide-react';
 import { SuccessModalProps } from './SuccessModal.types';
-import { FormData } from '../../../types/form/form.types';
 
 
-export const SuccessModal: React.FC<SuccessModalProps> = ({
+const SuccessModal: React.FC<SuccessModalProps> = ({
   isOpen,
   formData,
   onClose,
@@ -118,3 +117,5 @@ export const SuccessModal: React.FC<SuccessModalProps> = ({
     </div>
   );
 };
+
+export default SuccessModal;

@@ -3,12 +3,12 @@ import { useFormValidation } from "../../../hooks/useFormValidation";
 import { fetchSchema } from "../../../services/api/schemaService";
 import { FieldRules, FormSection } from "../../../types/form/form.types";
 import { ErrorMessage } from "../../common/ErrorMessage";
-import { FormField } from "../form-field/FormField";
+import FormField from "../form-field/FormField";
 import { FormHeader } from "../FormHeader";
-import { SuccessModal } from "../success-modal/SuccessModal";
 import { DynamicFormProps, DynamicFormState } from "./DynamicForm.type";
 import { dynamicFormConsts } from "./dynamicFormConsts";
 import { Loader } from "../../common/Loader";
+import { SuccessModal } from "../success-modal";
 
 export const DynamicForm: React.FC<DynamicFormProps> = ({
   onSubmit,
@@ -152,8 +152,6 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
 
     return Math.round((filledFieldsCount / allFieldLabels.length) * 100);
   };
-
-
 
   // Show loading state
   if (state.isLoading) {

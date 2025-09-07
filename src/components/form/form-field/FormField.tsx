@@ -5,7 +5,7 @@ import { FormFieldProps } from './FormField.types';
 
 
 
-export const FormField: React.FC<FormFieldProps> = ({
+const FormField: React.FC<FormFieldProps> = ({
   field,
   value,
   errors,
@@ -128,3 +128,5 @@ export const FormField: React.FC<FormFieldProps> = ({
     </div>
   );
 };
+
+export default FormField;
