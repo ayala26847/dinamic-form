@@ -1,6 +1,7 @@
 import React from 'react';
 import { ProgressBarProps } from './ProgressBar.types';
 import { PROGRESS_BAR_COLOR_CLASSES, PROGRESS_BAR_SIZE_CLASSES } from './progressBarConsts';
+import { progressBarStyles, getProgressBarClasses } from './ProgressBar.styles';
 
 
 const ProgressBar: React.FC<ProgressBarProps> = ({
@@ -17,12 +18,10 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   const clampedPercentage = Math.max(0, Math.min(100, percentage));
 
   return (
-    <div className={`w-full ${className}`}>
-      <div className={`w-full bg-gray-200 rounded-full ${PROGRESS_BAR_SIZE_CLASSES[size]}`}>
+    <div className={getProgressBarClasses.container(className)}>
+      <div className={`${progressBarStyles.track} ${PROGRESS_BAR_SIZE_CLASSES[size]}`}>
         <div
-          className={`${PROGRESS_BAR_COLOR_CLASSES[color]} ${PROGRESS_BAR_SIZE_CLASSES[size]} rounded-full ${
-            animated ? 'transition-all duration-300' : ''
-          } ${barClassName}`}
+          className={getProgressBarClasses.bar(PROGRESS_BAR_COLOR_CLASSES[color], PROGRESS_BAR_SIZE_CLASSES[size], animated, barClassName)}
           style={{ width: `${clampedPercentage}%` }}
           role="progressbar"
           aria-valuenow={clampedPercentage}
@@ -32,7 +31,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
         />
       </div>
       {showPercentage && (
-        <div className={`mt-2 text-sm text-gray-500 text-center ${textClassName}`}>
+        <div className={getProgressBarClasses.text(textClassName)}>
           {clampedPercentage}% Complete
         </div>
       )}

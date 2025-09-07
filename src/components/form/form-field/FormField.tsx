@@ -2,6 +2,7 @@
 import { AlertCircle } from 'lucide-react';
 import React from 'react';
 import { FormFieldProps } from './FormField.types';
+import { formFieldStyles, getFormFieldClasses } from './FormField.styles';
 
 
 
@@ -20,11 +21,7 @@ const FormField: React.FC<FormFieldProps> = ({
   const fieldId = field.label.toLowerCase().replace(/\s+/g, '-');
   const finalPlaceholder = placeholder || `Enter ${field.label.toLowerCase()}`;
 
-  const baseInputClasses = `w-full px-4 py-3 border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 ${
-    hasErrors 
-      ? 'border-red-300 focus:border-red-500 focus:ring-red-200 bg-red-50' 
-      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200 bg-white'
-  } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`;
+  const baseInputClasses = getFormFieldClasses.baseInput(hasErrors, disabled, className);
 
   const renderField = () => {
     switch (field.type) {
@@ -84,7 +81,7 @@ const FormField: React.FC<FormFieldProps> = ({
             id={fieldId}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className={`${baseInputClasses} min-h-[120px] resize-vertical`}
+            className={getFormFieldClasses.textarea(hasErrors, disabled, className)}
             placeholder={finalPlaceholder}
             disabled={disabled}
             autoFocus={autoFocus}
@@ -98,28 +95,28 @@ const FormField: React.FC<FormFieldProps> = ({
   };
 
   return (
-    <div className="space-y-2">
-      <label htmlFor={fieldId} className="block text-sm font-semibold text-gray-700">
+    <div className={formFieldStyles.container}>
+      <label htmlFor={fieldId} className={formFieldStyles.label.base}>
         {field.label}
         {field.rules.required?.value && (
-          <span className="text-red-500 ml-1" aria-label="Required field">*</span>
+          <span className={formFieldStyles.label.required} aria-label="Required field">*</span>
         )}
       </label>
       
-      <div className="relative">
+      <div className={formFieldStyles.inputWrapper}>
         {renderField()}
         {hasErrors && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-            <AlertCircle className="h-5 w-5 text-red-500" aria-hidden="true" />
+          <div className={formFieldStyles.errorIcon.container}>
+            <AlertCircle className={formFieldStyles.errorIcon.icon} aria-hidden="true" />
           </div>
         )}
       </div>
 
       {hasErrors && (
-        <div className="space-y-1" role="alert">
+        <div className={formFieldStyles.errorMessages.container} role="alert">
           {errors.map((error, index) => (
-            <div key={index} className="flex items-center text-sm text-red-600">
-              <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" aria-hidden="true" />
+            <div key={index} className={formFieldStyles.errorMessages.message}>
+              <AlertCircle className={formFieldStyles.errorMessages.icon} aria-hidden="true" />
               <span>{error}</span>
             </div>
           ))}

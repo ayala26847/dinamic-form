@@ -9,6 +9,7 @@ import { DynamicFormProps, DynamicFormState } from "./DynamicForm.type";
 import { dynamicFormConsts } from "./dynamicFormConsts";
 import { Loader } from "../../common/Loader";
 import { SuccessModal } from "../success-modal";
+import { dynamicFormStyles, getDynamicFormClasses } from "./DynamicForm.styles";
 
 export const DynamicForm: React.FC<DynamicFormProps> = ({
   onSubmit,
@@ -178,10 +179,8 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   }
 
   return (
-    <div
-      className={`min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8 ${className}`}
-    >
-      <div className="max-w-2xl mx-auto">
+    <div className={getDynamicFormClasses.container(className)}>
+      <div className={dynamicFormStyles.wrapper}>
         {/* Header */}
         <FormHeader
           title="Dynamic Form"
@@ -191,15 +190,15 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
         />
 
         {/* Form */}
-        <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
-          <div className="p-8">
+        <div className={dynamicFormStyles.formCard}>
+          <div className={dynamicFormStyles.formContent}>
             {schema.map((section: FormSection, sectionIndex: number) => (
-              <div key={sectionIndex} className="mb-8 last:mb-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b border-gray-200">
+              <div key={sectionIndex} className={dynamicFormStyles.section.container}>
+                <h2 className={dynamicFormStyles.section.title}>
                   {section.title}
                 </h2>
 
-                <div className="grid gap-6">
+                <div className={dynamicFormStyles.section.fieldsGrid}>
                   {section.fields.map((field, fieldIndex) => (
                     <FormField
                       key={fieldIndex}
@@ -219,20 +218,16 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
             ))}
 
             {/* Submit Button */}
-            <div className="flex justify-end pt-6 border-t border-gray-200">
+            <div className={dynamicFormStyles.submitButton.container}>
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={!isFormValid() || state.isSubmitting}
-                className={`px-8 py-3 rounded-lg font-semibold transition-all duration-200 ${
-                  isFormValid() && !state.isSubmitting
-                    ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                } ${state.isSubmitting ? "opacity-50" : ""}`}
+                className={getDynamicFormClasses.submitButton(isFormValid(), state.isSubmitting)}
               >
                 {state.isSubmitting ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                  <div className={dynamicFormStyles.loading.container}>
+                    <div className={dynamicFormStyles.loading.spinner} />
                     Submitting...
                   </div>
                 ) : (

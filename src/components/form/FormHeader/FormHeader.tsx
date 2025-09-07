@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormHeaderProps } from './FormHeader.types';
 import ProgressBar from '../../common/ProgressBar/ProgressBar';
+import { formHeaderStyles, getFormHeaderClasses } from './FormHeader.styles';
 
 const FormHeader: React.FC<FormHeaderProps> = ({
   title,
@@ -13,19 +14,19 @@ const FormHeader: React.FC<FormHeaderProps> = ({
   progressBarProps = {}
 }) => {
   return (
-    <div className={`text-center mb-8 ${className}`}>
-      <h1 className={`text-4xl font-bold text-gray-900 mb-2 ${titleClassName}`}>
+    <div className={getFormHeaderClasses.container(className)}>
+      <h1 className={getFormHeaderClasses.title(titleClassName)}>
         {title}
       </h1>
       {subtitle && (
-        <p className={`text-lg text-gray-600 ${subtitleClassName}`}>
+        <p className={getFormHeaderClasses.subtitle(subtitleClassName)}>
           {subtitle}
         </p>
       )}
       {showProgressBar && (
         <ProgressBar
           percentage={progressPercentage}
-          className="mt-4"
+          className={formHeaderStyles.progressBar.container}
           showPercentage={true}
           size="md"
           color="blue"

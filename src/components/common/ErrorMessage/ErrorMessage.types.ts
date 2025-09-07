@@ -1,7 +1,7 @@
 export interface ErrorMessageProps {
   message: string;
   title?: string;
-  variant?: 'inline' | 'fullPage';
+  variant?: "inline" | "fullPage";
   showRetryButton?: boolean;
   onRetry?: () => void;
   className?: string;
