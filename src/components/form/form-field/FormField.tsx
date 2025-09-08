@@ -1,31 +1,33 @@
-
-import { AlertCircle } from 'lucide-react';
-import React from 'react';
-import { FormFieldProps } from './FormField.types';
-import { formFieldStyles, getFormFieldClasses } from './FormField.styles';
-
-
+import { AlertCircle } from "lucide-react";
+import React from "react";
+import { formFieldStyles, getFormFieldClasses } from "./FormField.styles";
+import { FormFieldProps } from "./FormField.types";
+import { formFieldConsts } from "./FormFieldConsts";
 
 const FormField: React.FC<FormFieldProps> = ({
   field,
   value,
   errors,
   onChange,
-  className = '',
+  className = "",
   disabled = false,
   autoFocus = false,
   placeholder,
-  testId
+  testId,
 }) => {
   const hasErrors = errors.length > 0;
-  const fieldId = field.label.toLowerCase().replace(/\s+/g, '-');
+  const fieldId = field.label.toLowerCase().replace(/\s+/g, "-");
   const finalPlaceholder = placeholder || `Enter ${field.label.toLowerCase()}`;
 
-  const baseInputClasses = getFormFieldClasses.baseInput(hasErrors, disabled, className);
+  const baseInputClasses = getFormFieldClasses.baseInput(
+    hasErrors,
+    disabled,
+    className
+  );
 
   const renderField = () => {
     switch (field.type) {
-      case 'input':
+      case "input":
         return (
           <input
             id={fieldId}
@@ -40,13 +42,15 @@ const FormField: React.FC<FormFieldProps> = ({
           />
         );
 
-      case 'input_number':
+      case "input_number":
         return (
           <input
             id={fieldId}
             type="number"
             value={value}
-            onChange={(e) => onChange(e.target.value ? Number(e.target.value) : '')}
+            onChange={(e) =>
+              onChange(e.target.value ? Number(e.target.value) : "")
+            }
             className={baseInputClasses}
             placeholder={finalPlaceholder}
             disabled={disabled}
@@ -55,7 +59,7 @@ const FormField: React.FC<FormFieldProps> = ({
           />
         );
 
-      case 'select':
+      case "select":
         return (
           <select
             id={fieldId}
@@ -75,13 +79,17 @@ const FormField: React.FC<FormFieldProps> = ({
           </select>
         );
 
-      case 'textarea':
+      case "textarea":
         return (
           <textarea
             id={fieldId}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className={getFormFieldClasses.textarea(hasErrors, disabled, className)}
+            className={getFormFieldClasses.textarea(
+              hasErrors,
+              disabled,
+              className
+            )}
             placeholder={finalPlaceholder}
             disabled={disabled}
             autoFocus={autoFocus}
@@ -99,15 +107,23 @@ const FormField: React.FC<FormFieldProps> = ({
       <label htmlFor={fieldId} className={formFieldStyles.label.base}>
         {field.label}
         {field.rules.required?.value && (
-          <span className={formFieldStyles.label.required} aria-label="Required field">*</span>
+          <span
+            className={formFieldStyles.label.required}
+            aria-label={formFieldConsts.requiredField}
+          >
+            *
+          </span>
         )}
       </label>
-      
+
       <div className={formFieldStyles.inputWrapper}>
         {renderField()}
         {hasErrors && (
           <div className={formFieldStyles.errorIcon.container}>
-            <AlertCircle className={formFieldStyles.errorIcon.icon} aria-hidden="true" />
+            <AlertCircle
+              className={formFieldStyles.errorIcon.icon}
+              aria-hidden="true"
+            />
           </div>
         )}
       </div>
@@ -116,7 +132,10 @@ const FormField: React.FC<FormFieldProps> = ({
         <div className={formFieldStyles.errorMessages.container} role="alert">
           {errors.map((error, index) => (
             <div key={index} className={formFieldStyles.errorMessages.message}>
-              <AlertCircle className={formFieldStyles.errorMessages.icon} aria-hidden="true" />
+              <AlertCircle
+                className={formFieldStyles.errorMessages.icon}
+                aria-hidden="true"
+              />
               <span>{error}</span>
             </div>
           ))}

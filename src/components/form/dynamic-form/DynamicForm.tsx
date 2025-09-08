@@ -1,16 +1,16 @@
 // components/forms/dynamic-form/DynamicForm.tsx
 import React, { useState } from "react";
+import { useAsyncData } from "../../../hooks/useAsyncData";
 import { useFormValidation } from "../../../hooks/useFormValidation";
 import { fetchSchema } from "../../../services/api/schemaService";
 import { FieldRules, FormSection } from "../../../types/form/form.types";
+import { AsyncWrapper } from "../../common/AsyncWrapper/AsyncWrapper";
 import FormField from "../form-field/FormField";
 import { FormHeader } from "../FormHeader";
 import { SuccessModal } from "../success-modal";
-import { DynamicFormProps, DynamicFormState } from "./DynamicForm.type";
-import { dynamicFormConsts } from "./dynamicFormConsts";
 import { dynamicFormStyles, getDynamicFormClasses } from "./DynamicForm.styles";
-import { useAsyncData } from "../../../hooks/useAsyncData";
-import { AsyncWrapper } from "../../common/AsyncWrapper/AsyncWrapper";
+import { DynamicFormProps } from "./DynamicForm.type";
+import { dynamicFormConsts } from "./dynamicFormConsts";
 
 export const DynamicForm: React.FC<DynamicFormProps> = ({
   onSubmit,
@@ -24,18 +24,18 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
     isSubmitting: false,
   });
 
-  const { formData, fieldErrors, setFieldValue, validateAllFields, resetForm } =
+  const { formData, fieldErrors, setFieldValue, validateAllFields } =
     useFormValidation({ validateOnChange: true });
 
   // Use the generic async data hook
-  const { 
-    data: schema, 
-    isLoading, 
-    error, 
-    refetch 
+  const {
+    data: schema,
+    isLoading,
+    error,
+    refetch,
   } = useAsyncData<FormSection[]>(fetchSchema, {
     retryCount: 2,
-    retryDelay: 1000
+    retryDelay: 1000,
   });
 
   // Build field rules object for validation
@@ -54,7 +54,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   // Check if form is valid
   const isFormValid = (): boolean => {
     if (!schema) return false;
-    
+
     const fieldsRules = getFieldsRules();
     let hasErrors = false;
     let hasEmptyRequired = false;
@@ -102,9 +102,9 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
         ...prev,
         isSubmitting: false,
       }));
-      
+
       // Let AsyncWrapper handle error display if needed
-      console.error('Form submission failed:', error);
+      console.error("Form submission failed:", error);
     }
   };
 
@@ -125,7 +125,7 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
   // Calculate progress percentage
   const getProgressPercentage = (): number => {
     if (!schema) return 0;
-    
+
     const allFieldLabels: string[] = [];
     schema.forEach((section: FormSection) => {
       section.fields.forEach((field) => {
@@ -137,7 +137,9 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
 
     const filledFieldsCount = allFieldLabels.filter((fieldLabel) => {
       const value = formData[fieldLabel];
-      return value !== undefined && value !== null && String(value).trim() !== '';
+      return (
+        value !== undefined && value !== null && String(value).trim() !== ""
+      );
     }).length;
 
     return Math.round((filledFieldsCount / allFieldLabels.length) * 100);
@@ -149,76 +151,82 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
       isLoading={isLoading}
       error={error}
       onRetry={refetch}
-      loadingMessage="Loading form schema..."
-      errorTitle="Failed to Load Form"
+      loadingMessage={dynamicFormConsts.loadingMessage}
+      errorTitle={dynamicFormConsts.errorTitle}
       className={getDynamicFormClasses.container(className)}
     >
       {(schema) => (
         <div className={dynamicFormStyles.wrapper}>
-            {/* Header */}
-            <FormHeader
-              title="Dynamic Form"
-              subtitle="Please fill out all required fields"
-              showProgressBar={showProgressBar}
-              progressPercentage={getProgressPercentage()}
-            />
+          {/* Header */}
+          <FormHeader
+            title={dynamicFormConsts.formTitle}
+            subtitle={dynamicFormConsts.formSubtitle}
+            showProgressBar={showProgressBar}
+            progressPercentage={getProgressPercentage()}
+          />
 
-            {/* Form */}
-            <div className={dynamicFormStyles.formCard}>
-              <div className={dynamicFormStyles.formContent}>
-                {schema.map((section: FormSection, sectionIndex: number) => (
-                  <div key={sectionIndex} className={dynamicFormStyles.section.container}>
-                    <h2 className={dynamicFormStyles.section.title}>
-                      {section.title}
-                    </h2>
+          {/* Form */}
+          <div className={dynamicFormStyles.formCard}>
+            <div className={dynamicFormStyles.formContent}>
+              {schema.map((section: FormSection, sectionIndex: number) => (
+                <div
+                  key={sectionIndex}
+                  className={dynamicFormStyles.section.container}
+                >
+                  <h2 className={dynamicFormStyles.section.title}>
+                    {section.title}
+                  </h2>
 
-                    <div className={dynamicFormStyles.section.fieldsGrid}>
-                      {section.fields.map((field, fieldIndex) => (
-                        <FormField
-                          key={fieldIndex}
-                          field={field}
-                          value={formData[field.label] || ""}
-                          errors={fieldErrors[field.label] || []}
-                          onChange={(value: string | number) =>
-                            handleFieldChange(field.label, value, field.rules)
-                          }
-                          testId={`field-${field.label
-                            .toLowerCase()
-                            .replace(/\s+/g, "-")}`}
-                        />
-                      ))}
-                    </div>
+                  <div className={dynamicFormStyles.section.fieldsGrid}>
+                    {section.fields.map((field, fieldIndex) => (
+                      <FormField
+                        key={fieldIndex}
+                        field={field}
+                        value={formData[field.label] || ""}
+                        errors={fieldErrors[field.label] || []}
+                        onChange={(value: string | number) =>
+                          handleFieldChange(field.label, value, field.rules)
+                        }
+                        testId={`field-${field.label
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}`}
+                      />
+                    ))}
                   </div>
-                ))}
-
-                {/* Submit Button */}
-                <div className={dynamicFormStyles.submitButton.container}>
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={!isFormValid() || state.isSubmitting}
-                    className={getDynamicFormClasses.submitButton(isFormValid(), state.isSubmitting)}
-                  >
-                    {state.isSubmitting ? (
-                      <div className={dynamicFormStyles.loading.container}>
-                        <div className={dynamicFormStyles.loading.spinner} />
-                        Submitting...
-                      </div>
-                    ) : (
-                      submitButtonText
-                    )}
-                  </button>
                 </div>
+              ))}
+
+              {/* Submit Button */}
+              <div className={dynamicFormStyles.submitButton.container}>
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  disabled={!isFormValid() || state.isSubmitting}
+                  className={getDynamicFormClasses.submitButton(
+                    isFormValid(),
+                    state.isSubmitting
+                  )}
+                >
+                  {state.isSubmitting ? (
+                    <div className={dynamicFormStyles.loading.container}>
+                      <div className={dynamicFormStyles.loading.spinner} />
+                      Submitting...
+                    </div>
+                  ) : (
+                    submitButtonText
+                  )}
+                </button>
               </div>
             </div>
+          </div>
 
-            {/* Success Modal */}
-            <SuccessModal
-              isOpen={state.showSuccessModal}
-              formData={formData as any}
-              onClose={handleCloseModal}
-              allowDataExport={true}
-            />
+          {/* Success Modal */}
+          <SuccessModal
+            isOpen={state.showSuccessModal}
+            formData={formData as any}
+            onClose={handleCloseModal}
+            allowDataExport={true}
+          />
         </div>
       )}
     </AsyncWrapper>

@@ -1,4 +1,4 @@
-import { FormData, Schema } from "../../../types/form/form.types";
+import { FormData } from "../../../types/form/form.types";
 
 export interface DynamicFormProps {
   onSubmit?: (data: FormData) => Promise<void>;
